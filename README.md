@@ -1,70 +1,140 @@
-# Getting Started with Create React App
+# Covid-19
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 개발목표 
 
-## Available Scripts
+`화제의 코로나 바이러스의 API 관련 클론 코딩이 있어서 호기심을 가지고 클론코딩을 해보았습니다. `
 
-In the project directory, you can run:
+## 사용기술
 
-### `npm start`
+ - React
+ - axios
+ - chart.js
+ - react-chartjs-2
+ - css 
+  
+  
+  ## 주요기능
+  
+  - https://covid19api.com/ 에있는 오픈 API를 Axios로 사용
+  - 불러온 API를 chart.js, react-chartjs-2 라이브러리를 활용해 화면에뿌려줌. 
+  
+  
+  ***
+  
+  가져온 API 를 담을 각각의 State를 만들어놓는다
+  
+  ```
+   const [confirmedData, setconfirmedData] = useState({
+    labels: ['1월', '2월', '3월'],
+    datasets: [
+      {
+        label: '국내 누적 확진자',
+        backgroundColor: 'salmon',
+        fill: true,
+        data: [10, 5, 3],
+      },
+    ],
+  })
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+  const [quarantineData, setQuarantineData] = useState({
+    labels: ['1월', '2월', '3월'],
+    datasets: [
+      {
+        label: '국내 누적 확진자',
+        borderColor: 'salmon',
+        fill: false,
+        data: [10, 5, 3],
+      },
+    ],
+  })
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+  const [comparedData, setComparedData] = useState({
+    labels: ['1월', '2월', '3월'],
+    datasets: [
+      {
+        label: '국내 누적 확진자',
+        borderColor: 'salmon',
+        fill: false,
+        data: [10, 5, 3],
+      },
+    ],
+  })
+  ```
+  
+  ***
+  
+  (Axios로 API를 불러옴)
+  
+  ```
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const res = await axios.get(
+        'https://api.covid19api.com/total/dayone/country/kr'
+      )
+      makeData(res.data)
+    }
+   ```
+   
+   ***
+   
+   
+   react-chartjs-2라이브러리의  `Bar, Doughnut, Line` 활용해서 화면에뿌려준다.
+   
+   ```
+   <section>
+      <h2>국내 코로나 현황</h2>
+      <div className="contents">
+        <div>
+          <Bar
+            data={confirmedData}
+            options={{
+              title: {
+                display: true,
+                text: '누적 확진자 추이',
+                fontSize: 16,
+              },
+            }}
+          ></Bar>
+        </div>
+        <div>
+          <Line
+            data={quarantineData}
+            options={{
+              title: {
+                display: true,
+                text: '월별 격리자 현황',
+                fontSize: 16,
+              },
+            }}
+          ></Line>
+        </div>
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+        <div>
+          <Doughnut
+            data={comparedData}
+            options={{
+              title: {
+                display: true,
+                text: `누적 확진 , 해제, 사망(${new Date().getMonth() + 1}월)`,
+                fontSize: 16,
+              },
+            }}
+          ></Doughnut>
+        </div>
+      </div>
+    </section>
+    ```
+   
+   ***
+   
+   ## 개선사항 & 느낀점
+    - 부족한 UI 
+    - 그외에 기능들
+    
+    클론코딩을 해보았는데 설명을들어도 이해가 안가는 부분은 따로 찾아봐서 익혀야겠다 
+    모든 코드를 이해할순없지만 어떤흐름으로 동작하는지 체험해본거같다. 
+   
+   
+   
+   
+  
